@@ -1,13 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import NewItemView from './NewItemView';
-import ItemDetailsView from './ItemDetailsView';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
+import { database } from '../firebase-config';
+import { onValue, ref } from 'firebase/database';
+
 import blackTshirt from '../assets/black_tshirt.jpeg';
 import searchLogo from '../assets/search_logo.jpeg';
+import primaryBackground from '../assets/primary_background.png';
 
 // Sample product data
 const products = [
@@ -21,70 +21,75 @@ const products = [
     { id: 8, name: 'Product 8', price: '$80', image: blackTshirt },
 ];
 
-const Tab = createBottomTabNavigator();
-
-const App = () => {
-    return (
-
-        <Tab.Navigator>
-            <Tab.Screen name="Home" component={ClothingView} />
-            <Tab.Screen name="New Item" component={NewItemView} />
-            <Tab.Screen name="Item Details" component={ItemDetailsView} />
-        </Tab.Navigator>
-
-    );
-};
-
 const ClothingView = () => {
     const navigation = useNavigation();
+    const [clothingItems, setClothingItems] = useState([]);
 
-    const handleProductPress = (productId) => {
-        navigation.navigate('ProductDetail', { productId });
-    };
+    useEffect(() => {
+        const unsubscribe = onValue(ref(database, '/clothing'), (snapshot) => {
+            const data = snapshot.val() || {};
+            const clothing = Object.values(data);
+            setClothingItems(clothing);
+        });
 
-    const renderProductItem = (product) => (
-        <TouchableOpacity key={product.id} onPress={() => handleProductPress(product.id)}>
+        return () => unsubscribe();
+    }, []);
+
+    const renderProductItem = (clothingItem) => (
+        <TouchableOpacity key={clothingItem.id}>
+            {/* onPress={() => handleProductPress(clothingItem.id)} */}
             <View style={styles.productItem}>
-                <Image source={product.image} style={styles.productImage} />
-                <Text style={styles.productName}>{product.name}</Text>
-                <Text style={styles.productPrice}>{product.price}</Text>
+                <Image source={blackTshirt} style={styles.productImage} />
+                <Text style={styles.productName}>{clothingItem.name}</Text>
+                <Text style={styles.productPrice}>${clothingItem.price}</Text>
             </View>
         </TouchableOpacity>
     );
 
-    const groupedProducts = [];
-    for (let i = 0; i < products.length; i += 2) {
-        groupedProducts.push(products.slice(i, i + 2));
+    // const handleProductPress = (productId) => {
+    //     navigation.navigate('ProductDetail', { productId });
+    // };
+
+    const groupedClothingItems = [];
+    for (let i = 0; i < clothingItems.length; i += 2) {
+        groupedClothingItems.push(clothingItems.slice(i, i + 2));
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.logo}>Your Inventory</Text>
+        <ImageBackground source={primaryBackground} style={styles.backgroundImage}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.logo}>Your Inventory</Text>
+                </View>
+                <View style={styles.searchBar}>
+                    <Image source={searchLogo} style={styles.searchIcon} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Search..."
+                        placeholderTextColor="#999"
+                    />
+                </View>
+                <ScrollView contentContainerStyle={styles.productList}>
+                    {groupedClothingItems.map((row, index) => (
+                        <View key={index} style={styles.productRow}>
+                            {row.map((clothingItem) => renderProductItem(clothingItem))}
+                        </View>
+                    ))}
+                </ScrollView>
             </View>
-            <View style={styles.searchBar}>
-                <Image source={searchLogo} style={styles.searchIcon} />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Search..."
-                    placeholderTextColor="#999"
-                />
-            </View>
-            <ScrollView contentContainerStyle={styles.productList}>
-                {groupedProducts.map((row, index) => (
-                    <View key={index} style={styles.productRow}>
-                        {row.map((product) => renderProductItem(product))}
-                    </View>
-                ))}
-            </ScrollView>
-        </View>
+        </ImageBackground>
     );
 };
 
 const styles = StyleSheet.create({
+    backgroundImage: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+    },
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         paddingHorizontal: 20,
         paddingTop: 40,
     },
@@ -120,15 +125,18 @@ const styles = StyleSheet.create({
     },
     productRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         marginBottom: 20,
     },
+    productItemContainer: {
+        width: '48%',
+        marginBottom: 10,
+    },
     productItem: {
-        flex: 1,
         alignItems: 'center',
     },
     productImage: {
-        width: 150,
+        width: '100%',
         height: 150,
         resizeMode: 'contain',
         marginBottom: 10,
@@ -143,4 +151,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default App;
+export default ClothingView;
