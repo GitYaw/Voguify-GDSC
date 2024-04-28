@@ -1,19 +1,16 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 
-const ProfileView = ({ navigation, route }) => {
-    
-    const name = route.params?.name || 'Lucas';
+const ItemDetailsView = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            <Text>This is {name}'s profile</Text>
+            <Text>Edit item details</Text>
             <Button
                 title="Go Back"
                 onPress={() => navigation.goBack()}
             />
         </View>
-        
     );
 };
 
@@ -25,4 +22,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProfileView;
+export default ItemDetailsView;
