@@ -1,94 +1,127 @@
-import * as React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, FlatList, TextInput, ScrollView, Dimensions } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import blackTshirt from '../assets/black_tshirt.jpeg';
+import searchLogo from '../assets/search_logo.jpeg';
 
-const ClothingView = ({ navigation }) => {
-    // Dummy data for clothing items
-    const clothingData = [
-        { id: '1', name: 'Shirt', icon: 'tshirt-crew' },
-        { id: '4', name: 'Hat', icon: 'redhat' },
-        { id: '3', name: 'Shoes', icon: 'shoe-sneaker' },
-        { id: '2', name: 'Watch', icon: 'watch' },
-    ];
+// Sample product data
+const products = [
+  { id: 1, name: 'Product 1', price: '$10', image: blackTshirt },
+  { id: 2, name: 'Product 2', price: '$20', image: blackTshirt },
+  { id: 3, name: 'Product 3', price: '$30', image: blackTshirt },
+  { id: 4, name: 'Product 4', price: '$40', image: blackTshirt },
+  { id: 5, name: 'Product 5', price: '$50', image: blackTshirt },
+  { id: 6, name: 'Product 6', price: '$60', image: blackTshirt },
+  { id: 7, name: 'Product 7', price: '$70', image: blackTshirt },
+  { id: 8, name: 'Product 8', price: '$80', image: blackTshirt },
+];
 
-    const renderItem = ({ item }) => (
-        <TouchableOpacity
-            style={[styles.item, { width: Dimensions.get('window').width / 3 - 16 }]} // Adjust width to account for padding
-            // onPress={() => navigation.navigate('ClothingDetails', { itemId: item.id, itemName: item.name })}
-        >
-            {item.icon && <MaterialCommunityIcons name={item.icon} size={32} color="black" />}
-            <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
-        </TouchableOpacity>
-    );    
+const ClothingView = () => {
+  const navigation = useNavigation();
 
-    return (
-        <View style={styles.container}>
-            {/* Updated header title */}
-            <Text style={styles.headerTitle}>My Inventory</Text>
-            <View style={styles.searchContainer}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Search..."
-                    onChangeText={(text) => console.log(text)}
-                />
-                {/* Add filter components here */}
-            </View>
-            <FlatList
-                data={clothingData}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                numColumns={3} // Display items in 3 columns
-                contentContainerStyle={styles.grid}
-            />
-            <Button
-                title="Go Back"
-                onPress={() => navigation.goBack()}
-            />
-        </View>
-    );
+  const handleProductPress = (productId) => {
+    navigation.navigate('ProductDetail', { productId });
+  };
+
+  const renderProductItem = (product) => (
+    <TouchableOpacity key={product.id} onPress={() => handleProductPress(product.id)}>
+      <View style={styles.productItem}>
+        <Image source={product.image} style={styles.productImage} />
+        <Text style={styles.productName}>{product.name}</Text>
+        <Text style={styles.productPrice}>{product.price}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const groupedProducts = [];
+  for (let i = 0; i < products.length; i += 2) {
+    groupedProducts.push(products.slice(i, i + 2));
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.logo}>Your Inventory</Text>
+      </View>
+      <View style={styles.searchBar}>
+        <Image source={searchLogo} style={styles.searchIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Search..."
+          placeholderTextColor="#999"
+        />
+      </View>
+      <ScrollView contentContainerStyle={styles.productList}>
+        {groupedProducts.map((row, index) => (
+          <View key={index} style={styles.productRow}>
+            {row.map((product) => renderProductItem(product))}
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        textAlign: "center",
-    },
-    searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    searchInput: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        marginRight: 8,
-    },
-    grid: {
-        justifyContent: 'space-between',
-    },
-    item: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        marginBottom: 8,
-        justifyContent: 'space-around',
-    },
-    itemName: {
-        marginLeft: 8,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingTop: 40,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    marginBottom: 20,
+    borderRadius: 8,
+  },
+  searchIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+  },
+  productList: {
+    paddingBottom: 80,
+  },
+  productRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  productItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  productImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  productName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  productPrice: {
+    fontSize: 14,
+    color: '#888',
+  },
 });
 
 export default ClothingView;
