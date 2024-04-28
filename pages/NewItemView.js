@@ -1,36 +1,93 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Modal } from 'react-native';
-import { DatePicker } from '@react-native-community/datetimepicker';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Alert, Modal, Platform } from 'react-native';
+import { DateTimePicker } from '@react-native-community/datetimepicker';
+import { push, ref } from 'firebase/database';
+import { database } from '../firebase-config';
+
 import loginBackground from '../assets/new_item_background.png';
 
 const NewItemView = ({ navigation }) => {
   const [itemName, setItemName] = useState('');
   const [price, setPrice] = useState('');
-  const [color, setColor] = useState('');
-  const [category, setCategory] = useState('');
-  const [baginess, setBaginess] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [purchaseDate, setPurchaseDate] = useState('');
 
+  // const [color, setColor] = useState('');
+  const [category, setCategory] = useState('');
+  // const [baginess, setBaginess] = useState('');
+
+  // const [showDatePicker, setShowDatePicker] = useState(false);
   const [categoryDropdownVisible, setCategoryDropdownVisible] = useState(false);
-  const [baginessDropdownVisible, setBaginessDropdownVisible] = useState(false);
+  // const [baginessDropdownVisible, setBaginessDropdownVisible] = useState(false);
   const [categoryOptions] = useState(['Pants', 'Shorts', 'Tshirt', 'Jacket', 'Shoes']);
-  const [baginessOptions] = useState(['Baggy', 'Skinny', 'Fit']);
+  // const [baginessOptions] = useState(['Baggy', 'Skinny', 'Fit']);
 
   const handleCategorySelect = (selectedCategory) => {
     setCategory(selectedCategory);
     setCategoryDropdownVisible(false);
   };
 
-  const handleBaginessSelect = (selectedBaginess) => {
-    setBaginess(selectedBaginess);
-    setBaginessDropdownVisible(false);
-  };
+  // const handleBaginessSelect = (selectedBaginess) => {
+  //   setBaginess(selectedBaginess);
+  //   setBaginessDropdownVisible(false);
+  // };
 
-  
+  // const handleDateChange = (event, selectedDate) => {
+  //   setShowDatePicker(false); // Hide the date picker
+  //   if (selectedDate) {
+  //     setPurchaseDate(selectedDate); // Set the selected date in your state
+  //   }
+  // };
+
+  // const showDatePickerModal = () => {
+  //   setShowDatePicker(true); // Show the date picker modal
+  // };
+
 
   const handleAddItem = () => {
-    // Handle adding the item with the selected category
+    // Validate input fields
+    if (!itemName || !price || !purchaseDate) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    // Convert price to a number (assuming it's a string input)
+    const itemPrice = parseFloat(price);
+
+    // Validate the price
+    if (isNaN(itemPrice) || itemPrice <= 0) {
+      Alert.alert('Error', 'Please enter a valid price.');
+      return;
+    }
+
+    // Format purchase date as a JavaScript Date object
+    const purchasedDate = new Date(purchaseDate);
+
+    // Check if the date is valid
+    if (isNaN(purchasedDate.getTime())) {
+      Alert.alert('Error', 'Please enter a valid purchase date.');
+      return;
+    }
+
+    // Add item to Firebase database
+    push(ref(database, '/clothing'), {
+      name: itemName,
+      price: itemPrice,
+      date: purchasedDate.toISOString(), // Store date as a string in ISO format
+    })
+      .then(() => {
+        Alert.alert('Success', 'Clothing item added successfully.');
+        // Clear form fields after successful submission
+        setItemName('');
+        setPrice('');
+        setPurchaseDate('');
+        setCategory('')
+      })
+      .catch((error) => {
+        console.error('Error adding item to Firebase:', error);
+        Alert.alert('Error', 'Failed to add clothing item. Please try again later.');
+      });
   };
+
 
   return (
     <ImageBackground source={loginBackground} style={styles.backgroundImage}>
@@ -51,12 +108,34 @@ const NewItemView = ({ navigation }) => {
           value={price}
           keyboardType='numeric'
         />
-        <TextInput
+        {/* <TextInput
           style={styles.input}
           placeholder='Color'
           onChangeText={setColor}
           value={color}
+        /> */}
+
+        <TextInput
+          style={styles.input}
+          placeholder="YYYY-MM-DD"
+          value={purchaseDate}
+          onChangeText={setPurchaseDate}
         />
+
+        {/* Add button to show date picker */}
+        {/* <TouchableOpacity style={styles.datePickerButton} onPress={showDatePickerModal}>
+          <Text style={styles.buttonText}>Select Purchase Date</Text>
+        </TouchableOpacity> */}
+        {/* Date picker modal */}
+        {/* {showDatePicker && (
+          <DateTimePicker
+            value={purchaseDate || new Date()}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+            onChange={handleDateChange}
+          />
+        )} */}
+
 
         {/* Category Dropdown */}
         <TouchableOpacity
@@ -85,7 +164,7 @@ const NewItemView = ({ navigation }) => {
         </Modal>
 
         {/* Baginess Dropdown */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.dropdownButton}
           onPress={() => setBaginessDropdownVisible(true)}
         >
@@ -108,27 +187,7 @@ const NewItemView = ({ navigation }) => {
               </TouchableOpacity>
             ))}
           </View>
-        </Modal>
-
-        {/* Date Picker */}
-        <TouchableOpacity
-          style={styles.datePickerButton}
-          onPress={() => setShowDatePicker(true)}
-        >
-          <Text style={styles.loginText}>Select Date Bought</Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DatePicker
-            value={new Date()}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
-              // Handle date selection
-            }}
-            style={styles.datePicker}
-          />
-        )}
+        </Modal> */}
 
         {/* Add Button */}
         <TouchableOpacity
@@ -195,15 +254,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-   dropdownItem: {
-        backgroundColor: '#FFFFFF',
-        paddingVertical: 10,
-        paddingHorizontal: 10, // Adjust the padding to make the options narrower
-        borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
-        width: '70%', // Adjust the width to make the options narrower
-        alignItems: 'center',
-    },
+  dropdownItem: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 10,
+    paddingHorizontal: 10, // Adjust the padding to make the options narrower
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    width: '70%', // Adjust the width to make the options narrower
+    alignItems: 'center',
+  },
   datePickerButton: {
     alignItems: 'center',
     justifyContent: 'center',
