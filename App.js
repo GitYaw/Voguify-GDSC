@@ -9,6 +9,7 @@ import ExpensesView from './pages/ExpensesView';
 import LoginView from './pages/LoginView'
 import NewItemView from './pages/NewItemView'
 import ItemDetailsView from './pages/ItemDetailsView'
+import DataView from './pages/DataView'
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Welcome!' }} />
         <Stack.Screen name="Login" component={LoginView} />
         <Stack.Screen name="Profile" component={ProfileView} />
+        <Stack.Screen name="Data" component={DataView} />
         <Stack.Screen name="Clothing" component={ClothingView} />
         <Stack.Screen name="NewItem" component={NewItemView} />
         <Stack.Screen name="ItemDetails" component={ItemDetailsView} />
@@ -50,6 +52,9 @@ const HomeScreen = ({ navigation }) => {
       </View>
       <View style={styles.buttonContainer}>
         <Button title="Profile" onPress={() => navigation.navigate('Profile')} />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button title="Data" onPress={() => navigation.navigate('Data')} />
       </View>
       <View style={styles.buttonContainer}>
         <Button title="Clothing" onPress={() => navigation.navigate('Clothing')} />
