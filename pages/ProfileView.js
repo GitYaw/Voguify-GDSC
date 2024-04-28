@@ -13,6 +13,7 @@ const ProfileView = ({ navigation, route }) => {
                 onPress={() => navigation.goBack()}
             />
         </View>
+        
     );
 };
 

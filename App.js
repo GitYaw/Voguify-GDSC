@@ -6,6 +6,7 @@ import ProfileView from './pages/ProfileView';
 import ClothingView from './pages/ClothingView';
 import OutfitsView from './pages/OutfitsView';
 import ExpensesView from './pages/ExpensesView';
+import LoginView from './pages/LoginView'
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,8 @@ export default function App() {
         <Stack.Screen name="Clothing" component={ClothingView} />
         <Stack.Screen name="Outfits" component={OutfitsView} />
         <Stack.Screen name="Expenses" component={ExpensesView} />
+
+        <Stack.Screen name="Login" component={LoginView}></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -50,6 +53,9 @@ const HomeScreen = ({ navigation }) => {
       </View>
       <View style={styles.buttonContainer}>
         <Button title="Expenses" onPress={() => navigation.navigate('Expenses')} />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button title="Login" onPress={() => navigation.navigate('Login')} />
       </View>
     </View>
   );
