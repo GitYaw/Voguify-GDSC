@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity, createBottomTabNavigator } from 'react-native';
+
 import { useNavigation } from '@react-navigation/native';
 import blackTshirt from '../assets/black_tshirt.jpeg';
 import searchLogo from '../assets/search_logo.jpeg';
@@ -62,6 +63,20 @@ const ClothingView = () => {
   );
 };
 
+// const Tab = createBottomTabNavigator();
+
+// const App = () => {
+//   return (
+      
+//         <Tab.Navigator>
+//           <Tab.Screen name="Home" component={HomeView} />
+//           <Tab.Screen name="Stats" component={HomeView} />
+//           <Tab.Screen name="Profile" component={HomeView} />
+//         </Tab.Navigator>
+  
+//   );
+// };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -97,7 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   productList: {
-    paddingBottom: 80,
+    paddingBottom: 80, // To accommodate bottom navigator
   },
   productRow: {
     flexDirection: 'row',
