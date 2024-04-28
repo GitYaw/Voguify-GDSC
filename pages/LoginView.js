@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Alert, TouchableOpacity, ImageBackground } from 'react-native';
 
-import loginBackground from '../assets/login_background.png';
+import backgroundImage from '../assets/primary_background.png';
 
 const LoginView = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -12,7 +12,7 @@ const LoginView = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground source={loginBackground} style={styles.backgroundImage}>
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Login Here</Text>
