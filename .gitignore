@@ -37,3 +37,4 @@ yarn-error.*
 
 # Other
 *.code-workspace
+*config.json
