@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Alert, Modal, Platform } from 'react-native';
-import { DateTimePicker } from '@react-native-community/datetimepicker';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, Alert, Modal, Platform } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+
 import { push, ref } from 'firebase/database';
 import { database } from '../firebase-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import loginBackground from '../assets/new_item_background.png';
+import backgroundImage from '../assets/primary_background.png';
 
 const NewItemView = ({ navigation }) => {
   const [itemName, setItemName] = useState('');
@@ -16,6 +18,8 @@ const NewItemView = ({ navigation }) => {
   // const [baginess, setBaginess] = useState('');
 
   // const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const [categoryDropdownVisible, setCategoryDropdownVisible] = useState(false);
   // const [baginessDropdownVisible, setBaginessDropdownVisible] = useState(false);
   const [categoryOptions] = useState(['Pants', 'Shorts', 'Tshirt', 'Jacket', 'Shoes']);
@@ -42,11 +46,48 @@ const NewItemView = ({ navigation }) => {
   //   setShowDatePicker(true); // Show the date picker modal
   // };
 
+ // getting the current user
+  const [currentUser, setCurrentUser] = useState('');
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const user = await AsyncStorage.getItem('current_user');
+        if (user) {
+          setCurrentUser(user);
+        }
+      } catch (e) {
+        console.error("Failed to fetch current_user from AsyncStorage");
+      }
+    };
+    getCurrentUser();
+  }, []);
 
+  const handleImagePicker  = async () => {
+    
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    // console.log(result);
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
+  
+  
   const handleAddItem = () => {
     // Validate input fields
-    if (!itemName || !price || !purchaseDate) {
+    if (!itemName || !price || !purchaseDate ) {
       Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    if (currentUser === '' ) {
+      Alert.alert('Error', 'Please sign in to add an item.');
       return;
     }
 
@@ -73,6 +114,7 @@ const NewItemView = ({ navigation }) => {
       name: itemName,
       price: itemPrice,
       date: purchasedDate.toISOString(), // Store date as a string in ISO format
+      user: currentUser,
     })
       .then(() => {
         Alert.alert('Success', 'Clothing item added successfully.');
@@ -90,7 +132,7 @@ const NewItemView = ({ navigation }) => {
 
 
   return (
-    <ImageBackground source={loginBackground} style={styles.backgroundImage}>
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Add New Item</Text>
@@ -189,13 +231,29 @@ const NewItemView = ({ navigation }) => {
           </View>
         </Modal> */}
 
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={handleImagePicker}
+        >
+          <Text style={styles.buttonText}>Select Image</Text>
+        </TouchableOpacity>
+
+
         {/* Add Button */}
         <TouchableOpacity
           onPress={handleAddItem}
-          style={styles.loginButton}
+          style={styles.primaryButton}
         >
-          <Text style={styles.loginText}>Add</Text>
+          <Text style={styles.primaryText}>Add Item</Text>
         </TouchableOpacity>
+
+        
+
+        {/* Display selected image */}
+        {selectedImage && (
+          <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+        )}
+
       </View>
     </ImageBackground>
   );
@@ -257,10 +315,10 @@ const styles = StyleSheet.create({
   dropdownItem: {
     backgroundColor: '#FFFFFF',
     paddingVertical: 10,
-    paddingHorizontal: 10, // Adjust the padding to make the options narrower
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
-    width: '70%', // Adjust the width to make the options narrower
+    width: '70%',
     alignItems: 'center',
   },
   datePickerButton: {
@@ -278,7 +336,7 @@ const styles = StyleSheet.create({
     height: 200,
     marginBottom: 20,
   },
-  loginButton: {
+  primaryButton: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 15,
@@ -288,12 +346,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#00aeef',
     marginBottom: 20,
   },
-  loginText: {
+  primaryText: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
+  },
+  selectedImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'cover',
+    alignSelf: "center",
+    borderRadius: 10,
+    marginBottom: 10,
   },
 });
 

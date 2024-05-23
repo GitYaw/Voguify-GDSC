@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import { useNavigation } from '@react-navigation/native';
 import { database } from '../firebase-config';
@@ -24,16 +26,41 @@ const products = [
 const ClothingView = () => {
     const navigation = useNavigation();
     const [clothingItems, setClothingItems] = useState([]);
+    const [userClothingItems, setUserClothingItems] = useState([]);
+
+
+    // getting the current user
+    const [currentUser, setCurrentUser] = useState('');
+    useEffect(() => {
+        const getCurrentUser = async () => {
+        try {
+            const user = await AsyncStorage.getItem('current_user');
+            if (user) {
+                setCurrentUser(user);
+                console.log("current user set in items view page")
+            }
+        } catch (e) {
+            console.error("Failed to fetc from AsyncStorage");
+        }
+        };
+        getCurrentUser();
+    }, []);
 
     useEffect(() => {
+        if (!currentUser) {
+            return;
+        }
+
         const unsubscribe = onValue(ref(database, '/clothing'), (snapshot) => {
             const data = snapshot.val() || {};
             const clothing = Object.values(data);
             setClothingItems(clothing);
+            const filteredClothing = clothing.filter(clothing => clothing.user === currentUser);
+            setUserClothingItems(filteredClothing);
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [currentUser]);
 
     const renderProductItem = (clothingItem) => (
         <TouchableOpacity key={clothingItem.id}>
@@ -50,9 +77,11 @@ const ClothingView = () => {
     //     navigation.navigate('ProductDetail', { productId });
     // };
 
+    
+
     const groupedClothingItems = [];
-    for (let i = 0; i < clothingItems.length; i += 2) {
-        groupedClothingItems.push(clothingItems.slice(i, i + 2));
+    for (let i = 0; i < userClothingItems.length; i += 2) {
+        groupedClothingItems.push(userClothingItems.slice(i, i + 2));
     }
 
     return (
