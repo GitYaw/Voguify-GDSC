@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Alert, Modal, Platform } from 'react-native';
 import { DateTimePicker } from '@react-native-community/datetimepicker';
 import { push, ref } from 'firebase/database';
 import { database } from '../firebase-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import loginBackground from '../assets/new_item_background.png';
 
@@ -42,11 +43,32 @@ const NewItemView = ({ navigation }) => {
   //   setShowDatePicker(true); // Show the date picker modal
   // };
 
+ // getting the current user
+  const [currentUser, setCurrentUser] = useState('');
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const user = await AsyncStorage.getItem('current_user');
+        if (user) {
+          setCurrentUser(user);
+        }
+      } catch (e) {
+        console.error("Failed to fetch current_user from AsyncStorage");
+      }
+    };
+    getCurrentUser();
+  }, []);
+
 
   const handleAddItem = () => {
     // Validate input fields
-    if (!itemName || !price || !purchaseDate) {
+    if (!itemName || !price || !purchaseDate ) {
       Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    if (currentUser === '' ) {
+      Alert.alert('Error', 'Please sign in to add an item.');
       return;
     }
 
@@ -73,6 +95,7 @@ const NewItemView = ({ navigation }) => {
       name: itemName,
       price: itemPrice,
       date: purchasedDate.toISOString(), // Store date as a string in ISO format
+      user: currentUser,
     })
       .then(() => {
         Alert.alert('Success', 'Clothing item added successfully.');

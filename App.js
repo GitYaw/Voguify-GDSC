@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, ImageBackground } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -11,37 +11,80 @@ import NewItemView from './pages/NewItemView'
 import ItemDetailsView from './pages/ItemDetailsView'
 import DataView from './pages/DataView'
 import Footer from './Footer'; // Import the Footer component
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { getAuth, onAuthStateChanged, User, signOut } from 'firebase/auth';
+import { auth } from './firebase-config';
+
 
 import primaryBackground from './assets/primary_background.png';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+const App = () => {
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      await AsyncStorage.setItem('current_user', '');
+      console.log('User signed out!');
+      navigation.navigate('HomeScreen')
+    } catch (error) {
+      console.error('Error signing out: ', error);
+    }
+  };
+
+  
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Welcome!' }} />
-        <Stack.Screen name="Login" component={LoginView} />
-        <Stack.Screen name="Profile" component={ProfileView} />
-        <Stack.Screen name="Data" component={DataView} />
-        <Stack.Screen name="Clothing" component={ClothingView} />
-        <Stack.Screen name="NewItem" component={NewItemView} />
-        <Stack.Screen name="ItemDetails" component={ItemDetailsView} />
-        <Stack.Screen name="Outfits" component={OutfitsView} />
-        <Stack.Screen name="Expenses" component={ExpensesView} />
+          <Stack.Screen name="Login" component={LoginView} />
+          <Stack.Screen name="Home" options={{ title: 'Welcome!' }}>
+              {props => <HomeScreen {...props} handleSignOut={handleSignOut} />}  
+          </Stack.Screen>
+          <Stack.Screen name="Profile" component={ProfileView} />
+          <Stack.Screen name="Data" component={DataView} />
+          <Stack.Screen name="Clothing" component={ClothingView} />
+          <Stack.Screen name="NewItem" component={NewItemView} />
+          <Stack.Screen name="ItemDetails" component={ItemDetailsView} />
+          <Stack.Screen name="Outfits" component={OutfitsView} />
+          <Stack.Screen name="Expenses" component={ExpensesView} />
       </Stack.Navigator>
       <Footer />
     </NavigationContainer>
   );
 }
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, handleSignOut}) => {
+
+
+  const [currentUser, setCurrentUser] = useState('');
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const user = await AsyncStorage.getItem('current_user');
+        if (user) {
+          setCurrentUser(user);
+        }
+      } catch (e) {
+        console.error("Failed to fetch current_user from AsyncStorage");
+      }
+    };
+    getCurrentUser();
+  }, []);
+
+
+
   return (
     <ImageBackground source={primaryBackground} style={styles.backgroundImage}>
       <View style={styles.container}>
+      {currentUser === '' | !currentUser ? (
         <View style={styles.buttonContainer}>
           <Button title="Login" onPress={() => navigation.navigate('Login')} />
         </View>
+      ) : (
+        <>
         <View style={styles.buttonContainer}>
           <Button title="Profile" onPress={() => navigation.navigate('Profile')} />
         </View>
@@ -63,6 +106,11 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.buttonContainer}>
           <Button title="Expenses" onPress={() => navigation.navigate('Expenses')} />
         </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Sign Out" onPress={handleSignOut} />
+        </View>
+        </>
+      )}
       </View>
     </ImageBackground>
   );
@@ -85,3 +133,5 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
 });
+
+export default App;

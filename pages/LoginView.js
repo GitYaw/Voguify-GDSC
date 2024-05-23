@@ -1,15 +1,59 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Alert, TouchableOpacity, ImageBackground } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 import backgroundImage from '../assets/primary_background.png';
 
+import { database, auth } from '../firebase-config';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
 const LoginView = ({ navigation }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    Alert.alert('Login', `Username: ${username}, Password: ${password}`);
+
+  // setting current_user to an empty sting so that it is initialized
+  // const setUserToEmpty = async () => {
+  //   try {
+  //     await AsyncStorage.setItem('current_user', '');
+  //     console.log('Current user set to empty');
+  //   } catch (error) {
+  //     console.error('Error signing out: ', error);
+  //   }
+  // };
+  // setUserToEmpty();
+
+  const storeData = async (auth) => {
+    try {
+      await AsyncStorage.setItem('current_user', email);
+      console.log(email)
+    } catch (e) {
+      console.error("async storage")
+    }
   };
+
+  const handleLogin = async () => {
+    Alert.alert('Login', `Email: ${email}, Password: ${password}`);
+
+    // returns a console message if email and password were found
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // User logged in successfully, navigate to message board
+      console.log('You logged in!');
+      console.log(userCredential.user);
+      storeData(auth);
+      navigation.navigate('Home');
+    } catch (error) {
+      console.error('Error logging in:', error.message);
+    }
+  };
+
+  
+
+
+
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
@@ -21,8 +65,8 @@ const LoginView = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder='Email'
-          onChangeText={setUsername}
-          value={username}
+          onChangeText={setEmail}
+          value={email}
         />
         <TextInput
           style={styles.input}
