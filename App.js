@@ -92,7 +92,7 @@ const HomeScreen = ({ navigation, handleSignOut}) => {
           <Button title="Data" onPress={() => navigation.navigate('Data')} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Clothing" onPress={() => navigation.navigate('Clothing')} />
+          <Button title="Inventory" onPress={() => navigation.navigate('Clothing')} />
         </View>
         <View style={styles.buttonContainer}>
           <Button title="New Item" onPress={() => navigation.navigate('NewItem')} />
