@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, Alert, Modal, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 import { database, storage } from '../firebase-config';
 import { ref as databaseRef, push } from 'firebase/database';
 import { ref as storageRef, uploadBytes } from 'firebase/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import backgroundImage from '../assets/primary_background.png';
 
@@ -46,6 +47,22 @@ const NewItemView = ({ navigation }) => {
   //   setShowDatePicker(true); // Show the date picker modal
   // };
 
+ // getting the current user
+  const [currentUser, setCurrentUser] = useState('');
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const user = await AsyncStorage.getItem('current_user');
+        if (user) {
+          setCurrentUser(user);
+        }
+      } catch (e) {
+        console.error("Failed to fetch current_user from AsyncStorage");
+      }
+    };
+    getCurrentUser();
+  }, []);
+
   const handleImagePicker  = async () => {
     
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -66,11 +83,18 @@ const NewItemView = ({ navigation }) => {
   
   
   const handleAddItem = async () => {
-    if (!itemName || !price || !purchaseDate) {
+    // Validate input fields
+    if (!itemName || !price || !purchaseDate ) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
 
+    if (currentUser === '' ) {
+      Alert.alert('Error', 'Please sign in to add an item.');
+      return;
+    }
+
+    // Convert price to a number (assuming it's a string input)
     const itemPrice = parseFloat(price);
 
     if (isNaN(itemPrice) || itemPrice <= 0) {
@@ -106,6 +130,7 @@ const NewItemView = ({ navigation }) => {
       price: itemPrice,
       date: purchasedDate.toISOString(),
       category: category,
+      user: currentUser,
     })
       .then(() => {
         Alert.alert('Success', 'Clothing item added successfully.');
