@@ -50,7 +50,7 @@ const App = () => {
           <Stack.Screen name="ItemDetails" component={ItemDetailsView} />
           <Stack.Screen name="Outfits" component={OutfitsView} />
           <Stack.Screen name="Expenses" component={ExpensesView} />
-          <Stack.Screen name="Home" component={HomeView} />
+          <Stack.Screen name="HomeView" component={HomeView} />
       </Stack.Navigator>
       <Footer />
     </NavigationContainer>
@@ -91,7 +91,7 @@ const HomeScreen = ({ navigation, handleSignOut}) => {
           <Button title="Profile" onPress={() => navigation.navigate('Profile')} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Home" onPress={() => navigation.navigate('Home')} />
+          <Button title="Home" onPress={() => navigation.navigate('HomeView')} />
         </View>
         <View style={styles.buttonContainer}>
           <Button title="Data" onPress={() => navigation.navigate('Data')} />
