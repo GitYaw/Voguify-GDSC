@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, Alert, Modal, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-import { push, ref } from 'firebase/database';
-import { database } from '../firebase-config';
+import { database, storage } from '../firebase-config';
+import { ref as databaseRef, push } from 'firebase/database';
+import { ref as storageRef, uploadBytes } from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import backgroundImage from '../assets/primary_background.png';
@@ -71,6 +72,8 @@ const NewItemView = ({ navigation }) => {
       quality: 1,
     });
 
+    
+
     // console.log(result);
 
     if (!result.canceled) {
@@ -79,7 +82,7 @@ const NewItemView = ({ navigation }) => {
   };
   
   
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
     // Validate input fields
     if (!itemName || !price || !purchaseDate ) {
       Alert.alert('Error', 'Please fill in all fields.');
@@ -94,35 +97,49 @@ const NewItemView = ({ navigation }) => {
     // Convert price to a number (assuming it's a string input)
     const itemPrice = parseFloat(price);
 
-    // Validate the price
     if (isNaN(itemPrice) || itemPrice <= 0) {
       Alert.alert('Error', 'Please enter a valid price.');
       return;
     }
 
-    // Format purchase date as a JavaScript Date object
     const purchasedDate = new Date(purchaseDate);
 
-    // Check if the date is valid
     if (isNaN(purchasedDate.getTime())) {
       Alert.alert('Error', 'Please enter a valid purchase date.');
       return;
     }
 
-    // Add item to Firebase database
-    push(ref(database, '/clothing'), {
+    if (selectedImage) {
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      const imageRef = storageRef(storage, `clothingImages/${itemName}`);
+
+      await uploadBytes(imageRef, blob)
+        .then(() => {
+          Alert.alert('Success', 'Image uploaded');
+        })
+        .catch((error) => {
+          console.error('Error uploading image:', error);
+          Alert.alert('Error', 'Failed to upload image. Please try again later.');
+          return;
+        });
+    }
+
+    push(databaseRef(database, '/clothing'), {
       name: itemName,
       price: itemPrice,
-      date: purchasedDate.toISOString(), // Store date as a string in ISO format
+      date: purchasedDate.toISOString(),
+      category: category,
+      image: selectedImage,
       user: currentUser,
     })
       .then(() => {
         Alert.alert('Success', 'Clothing item added successfully.');
-        // Clear form fields after successful submission
         setItemName('');
         setPrice('');
         setPurchaseDate('');
-        setCategory('')
+        setCategory('');
+        setSelectedImage(null);
       })
       .catch((error) => {
         console.error('Error adding item to Firebase:', error);
