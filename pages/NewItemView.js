@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Alert, Modal, Platform } from 'react-native';
-import { DateTimePicker } from '@react-native-community/datetimepicker';
-import { push, ref } from 'firebase/database';
-import { database } from '../firebase-config';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, ImageBackground, Alert, Modal, Platform } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 
-import loginBackground from '../assets/new_item_background.png';
+import { database, storage } from '../firebase-config';
+import { ref as databaseRef, push } from 'firebase/database';
+import { ref as storageRef, uploadBytes } from 'firebase/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import backgroundImage from '../assets/primary_background.png';
 
 const NewItemView = ({ navigation }) => {
   const [itemName, setItemName] = useState('');
@@ -16,6 +19,8 @@ const NewItemView = ({ navigation }) => {
   // const [baginess, setBaginess] = useState('');
 
   // const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const [categoryDropdownVisible, setCategoryDropdownVisible] = useState(false);
   // const [baginessDropdownVisible, setBaginessDropdownVisible] = useState(false);
   const [categoryOptions] = useState(['Pants', 'Shorts', 'Tshirt', 'Jacket', 'Shoes']);
@@ -42,45 +47,98 @@ const NewItemView = ({ navigation }) => {
   //   setShowDatePicker(true); // Show the date picker modal
   // };
 
+ // getting the current user
+  const [currentUser, setCurrentUser] = useState('');
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const user = await AsyncStorage.getItem('current_user');
+        if (user) {
+          setCurrentUser(user);
+        }
+      } catch (e) {
+        console.error("Failed to fetch current_user from AsyncStorage");
+      }
+    };
+    getCurrentUser();
+  }, []);
 
-  const handleAddItem = () => {
+  const handleImagePicker  = async () => {
+    
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    
+
+    // console.log(result);
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
+  
+  
+  const handleAddItem = async () => {
     // Validate input fields
-    if (!itemName || !price || !purchaseDate) {
+    if (!itemName || !price || !purchaseDate ) {
       Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    if (currentUser === '' ) {
+      Alert.alert('Error', 'Please sign in to add an item.');
       return;
     }
 
     // Convert price to a number (assuming it's a string input)
     const itemPrice = parseFloat(price);
 
-    // Validate the price
     if (isNaN(itemPrice) || itemPrice <= 0) {
       Alert.alert('Error', 'Please enter a valid price.');
       return;
     }
 
-    // Format purchase date as a JavaScript Date object
     const purchasedDate = new Date(purchaseDate);
 
-    // Check if the date is valid
     if (isNaN(purchasedDate.getTime())) {
       Alert.alert('Error', 'Please enter a valid purchase date.');
       return;
     }
 
-    // Add item to Firebase database
-    push(ref(database, '/clothing'), {
+    if (selectedImage) {
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      const imageRef = storageRef(storage, `clothingImages/${itemName}`);
+
+      await uploadBytes(imageRef, blob)
+        .then(() => {
+          Alert.alert('Success', 'Image uploaded');
+        })
+        .catch((error) => {
+          console.error('Error uploading image:', error);
+          Alert.alert('Error', 'Failed to upload image. Please try again later.');
+          return;
+        });
+    }
+
+    push(databaseRef(database, '/clothing'), {
       name: itemName,
       price: itemPrice,
-      date: purchasedDate.toISOString(), // Store date as a string in ISO format
+      date: purchasedDate.toISOString(),
+      category: category,
+      user: currentUser,
     })
       .then(() => {
         Alert.alert('Success', 'Clothing item added successfully.');
-        // Clear form fields after successful submission
         setItemName('');
         setPrice('');
         setPurchaseDate('');
-        setCategory('')
+        setCategory('');
+        setSelectedImage(null);
       })
       .catch((error) => {
         console.error('Error adding item to Firebase:', error);
@@ -90,7 +148,7 @@ const NewItemView = ({ navigation }) => {
 
 
   return (
-    <ImageBackground source={loginBackground} style={styles.backgroundImage}>
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Add New Item</Text>
@@ -189,13 +247,29 @@ const NewItemView = ({ navigation }) => {
           </View>
         </Modal> */}
 
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={handleImagePicker}
+        >
+          <Text style={styles.buttonText}>Select Image</Text>
+        </TouchableOpacity>
+
+
         {/* Add Button */}
         <TouchableOpacity
           onPress={handleAddItem}
-          style={styles.loginButton}
+          style={styles.primaryButton}
         >
-          <Text style={styles.loginText}>Add</Text>
+          <Text style={styles.primaryText}>Add Item</Text>
         </TouchableOpacity>
+
+        
+
+        {/* Display selected image */}
+        {selectedImage && (
+          <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+        )}
+
       </View>
     </ImageBackground>
   );
@@ -257,10 +331,10 @@ const styles = StyleSheet.create({
   dropdownItem: {
     backgroundColor: '#FFFFFF',
     paddingVertical: 10,
-    paddingHorizontal: 10, // Adjust the padding to make the options narrower
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
-    width: '70%', // Adjust the width to make the options narrower
+    width: '70%',
     alignItems: 'center',
   },
   datePickerButton: {
@@ -278,7 +352,7 @@ const styles = StyleSheet.create({
     height: 200,
     marginBottom: 20,
   },
-  loginButton: {
+  primaryButton: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 15,
@@ -288,12 +362,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#00aeef',
     marginBottom: 20,
   },
-  loginText: {
+  primaryText: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
+  },
+  selectedImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'cover',
+    alignSelf: "center",
+    borderRadius: 10,
+    marginBottom: 10,
   },
 });
 

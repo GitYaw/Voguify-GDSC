@@ -33,3 +33,8 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+
+# Other
+*.code-workspace
+*config.json
