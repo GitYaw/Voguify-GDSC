@@ -137,6 +137,13 @@ const NewItemView = ({ navigation }) => {
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Add New Item</Text>
         </View>
+
+        {/* Display selected image */}
+        {selectedImage && (
+          <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+        )}
+
+
         <TextInput
           style={styles.input}
           placeholder='Item Name'
@@ -232,12 +239,13 @@ const NewItemView = ({ navigation }) => {
         </Modal> */}
 
         <TouchableOpacity
-          style={styles.primaryButton}
+          style={styles.imageButton}
           onPress={handleImagePicker}
         >
           <Text style={styles.buttonText}>Select Image</Text>
         </TouchableOpacity>
 
+        
 
         {/* Add Button */}
         <TouchableOpacity
@@ -247,12 +255,6 @@ const NewItemView = ({ navigation }) => {
           <Text style={styles.primaryText}>Add Item</Text>
         </TouchableOpacity>
 
-        
-
-        {/* Display selected image */}
-        {selectedImage && (
-          <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
-        )}
 
       </View>
     </ImageBackground>
@@ -277,6 +279,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
+    fontFamily: 'poppins',
     fontSize: 30,
     textAlign: 'center',
     marginBottom: 10,
@@ -284,6 +287,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
+    fontFamily: 'quicksand',
     height: 60,
     borderColor: 'gray',
     backgroundColor: '#F1F4FF',
@@ -304,6 +308,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   dropdownText: {
+    fontFamily: 'quicksand',
     fontSize: 16,
   },
   dropdownContainer: {
@@ -336,6 +341,24 @@ const styles = StyleSheet.create({
     height: 200,
     marginBottom: 20,
   },
+  bottonText: {
+    fontFamily: 'quicksand',
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  },
+  imageButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 32,
+    borderRadius: 10,
+    elevation: 3,
+    backgroundColor: '#BF6FB8',
+    marginBottom: 20,
+  },
   primaryButton: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -343,10 +366,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 10,
     elevation: 3,
-    backgroundColor: '#00aeef',
+    backgroundColor: '#D295CC',
     marginBottom: 20,
   },
   primaryText: {
+    fontFamily: 'poppins',
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',
@@ -358,6 +382,9 @@ const styles = StyleSheet.create({
     height: 150,
     resizeMode: 'cover',
     alignSelf: "center",
+    borderWidth: 3,
+    borderColor: '#D295CC',
+    borderStyle: "solid",
     borderRadius: 10,
     marginBottom: 10,
   },
