@@ -154,6 +154,13 @@ const NewItemView = ({ navigation }) => {
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Add New Item</Text>
         </View>
+
+        {/* Display selected image */}
+        {selectedImage && (
+          <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+        )}
+
+
         <TextInput
           style={styles.input}
           placeholder='Item Name'
@@ -255,6 +262,7 @@ const NewItemView = ({ navigation }) => {
           <Text style={styles.buttonText}>Select Image</Text>
         </TouchableOpacity>
 
+        
 
         {/* Add Button */}
         <TouchableOpacity
@@ -294,6 +302,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
+    fontFamily: 'poppins',
     fontSize: 30,
     textAlign: 'center',
     marginBottom: 10,
@@ -301,6 +310,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   input: {
+    fontFamily: 'quicksand',
     height: 60,
     borderColor: 'gray',
     backgroundColor: '#F1F4FF',
@@ -321,6 +331,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   dropdownText: {
+    fontFamily: 'quicksand',
     fontSize: 16,
   },
   dropdownContainer: {
@@ -360,10 +371,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 10,
     elevation: 3,
-    backgroundColor: '#00aeef',
+    backgroundColor: '#D295CC',
     marginBottom: 20,
   },
   primaryText: {
+    fontFamily: 'poppins',
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',
@@ -375,6 +387,9 @@ const styles = StyleSheet.create({
     height: 150,
     resizeMode: 'cover',
     alignSelf: "center",
+    borderWidth: 3,
+    borderColor: '#D295CC',
+    borderStyle: "solid",
     borderRadius: 10,
     marginBottom: 10,
   },
