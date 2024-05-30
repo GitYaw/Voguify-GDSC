@@ -7,6 +7,8 @@ const ItemDetailsView = ({ navigation, route }) => {
     const { price } = item;
     const { image } = item;
     const { date } = item;
+    const {category} = item;
+    const formattedDate = new Date(date).toLocaleDateString();
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState("T-Shirt Title");
     const [description, setDescription] = useState("T-Shirt Description");
@@ -40,6 +42,25 @@ const ItemDetailsView = ({ navigation, route }) => {
                 ) : (
                     <Text style={styles.description}> ${price}</Text>
                 )}
+                {isEditing ? (
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setDescription}
+                        value={date}
+                    />
+                ) : (
+                    <Text style={styles.description}> {formattedDate} </Text>
+                )}
+                {isEditing ? (
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setDescription}
+                        value={category}
+                    />
+                ) : (
+                    <Text style={styles.description}> {category} </Text>
+                )}
+                
                 <View style={{ flexDirection: "row", justifyContent: 'space-between' }}> 
                 <Button
                     title={isEditing ? "Save" : "Edit"}

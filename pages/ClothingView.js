@@ -20,6 +20,7 @@ onItemClick = (item) => {
         price: item.price,
         image: item.image,
         date: item.date,
+        category: item.category,
     });
 }
 const ClothingView = () => {
