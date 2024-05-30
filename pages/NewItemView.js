@@ -256,7 +256,7 @@ const NewItemView = ({ navigation }) => {
         </Modal> */}
 
         <TouchableOpacity
-          style={styles.imageButton}
+          style={styles.primaryButton}
           onPress={handleImagePicker}
         >
           <Text style={styles.buttonText}>Select Image</Text>
@@ -272,6 +272,12 @@ const NewItemView = ({ navigation }) => {
           <Text style={styles.primaryText}>Add Item</Text>
         </TouchableOpacity>
 
+        
+
+        {/* Display selected image */}
+        {selectedImage && (
+          <Image source={{ uri: selectedImage }} style={styles.selectedImage} />
+        )}
 
       </View>
     </ImageBackground>
@@ -356,24 +362,6 @@ const styles = StyleSheet.create({
   datePicker: {
     width: '100%',
     height: 200,
-    marginBottom: 20,
-  },
-  bottonText: {
-    fontFamily: 'quicksand',
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
-  },
-  imageButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 32,
-    borderRadius: 10,
-    elevation: 3,
-    backgroundColor: '#BF6FB8',
     marginBottom: 20,
   },
   primaryButton: {

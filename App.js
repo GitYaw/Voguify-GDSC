@@ -8,6 +8,7 @@ import OutfitsView from './pages/OutfitsView';
 import ExpensesView from './pages/ExpensesView';
 import LoginView from './pages/LoginView'
 import RegisterView from './pages/RegisterView'
+import LandingView from './pages/LandingView'
 import NewItemView from './pages/NewItemView'
 import ItemDetailsView from './pages/ItemDetailsView'
 import DataView from './pages/DataView'
@@ -43,6 +44,7 @@ const App = () => {
           <Stack.Screen name="Home" options={{ title: 'Welcome!' }}>
               {props => <HomeScreen {...props} handleSignOut={handleSignOut} />}  
           </Stack.Screen>
+          <Stack.Screen name="Landing" component={LandingView} />
           <Stack.Screen name="Profile" component={ProfileView} />
           <Stack.Screen name="CreateAccount" component={RegisterView} />
           <Stack.Screen name="Data" component={DataView} />
@@ -92,6 +94,9 @@ const HomeScreen = ({ navigation, handleSignOut}) => {
         </View>
         <View style={styles.buttonContainer}>
           <Button title="Register" onPress={() => navigation.navigate('CreateAccount')} />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Landing" onPress={() => navigation.navigate('Landing')} />
         </View>
         <View style={styles.buttonContainer}>
           <Button title="Data" onPress={() => navigation.navigate('Data')} />
