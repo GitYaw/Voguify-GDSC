@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, Button, ScrollView, ImageBackground } from 'react-native';
 import { BarChart, PieChart } from 'react-native-chart-kit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import primaryBackground from '../assets/primary_background.png';
 
@@ -44,6 +45,21 @@ const StatsView = ({ navigation, route }) => {
     };
 
     const sliceColor = ['#fbd203', '#ffb300', '#ff9100', '#ff6c00', '#ff3c00']
+
+
+
+
+    const getData = async () => {
+        try {
+          const value = await AsyncStorage.getItem('current_user');
+          
+          console.log(value);
+          
+        } catch (e) {
+          console.error("home page not get")
+        }
+      };
+      getData();
 
 
 
@@ -98,6 +114,10 @@ const StatsView = ({ navigation, route }) => {
                             chartConfig={chartConfig}
                         />
                     </View>
+                    <Button
+                        title="get auth string"
+                        onPress={() => getData()}
+                    />
 
 
 
