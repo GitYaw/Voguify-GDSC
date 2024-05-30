@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, Image, TextInput } from 'react-native';
-
+import { StyleSheet, Text, View, Button, Image, TextInput, ImageBackground} from 'react-native';
+import backgroundImage from '../assets/primary_background.png';
 const ItemDetailsView = ({ navigation, route }) => {
+    const { item } = route.params;
+    const { name } = item;
+    const { price } = item;
+    const { image } = item;
+    const { date } = item;
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState("T-Shirt Title");
     const [description, setDescription] = useState("T-Shirt Description");
@@ -11,43 +16,48 @@ const ItemDetailsView = ({ navigation, route }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Image
-                source={require('../assets/black_tshirt.jpeg')}
-                style={styles.image}
-            />
-            {isEditing ? (
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setTitle}
-                    value={title}
+        <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+            <View style={styles.container}>
+                <Image
+                    source={{uri: image}}
+                    style={styles.image}
                 />
-            ) : (
-                <Text style={styles.title}>{title}</Text>
-            )}
-            {isEditing ? (
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setDescription}
-                    value={description}
+                {isEditing ? (
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setTitle}
+                        value={item}
+                    />
+                ) : (
+                    <Text style={styles.title}>{name}</Text>
+                )}
+                {isEditing ? (
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setDescription}
+                        value={price}
+                    />
+                ) : (
+                    <Text style={styles.description}> ${price}</Text>
+                )}
+                <View style={{ flexDirection: "row", justifyContent: 'space-between' }}> 
+                <Button
+                    title={isEditing ? "Save" : "Edit"}
+                    onPress={handleEditToggle}
                 />
-            ) : (
-                <Text style={styles.description}>{description}</Text>
-            )}
-            <View style={{ flexDirection: "row", justifyContent: 'space-between' }}> 
-            <Button
-                title={isEditing ? "Save" : "Edit"}
-                onPress={handleEditToggle}
-            />
-            <Button
-                title="Go Back"
-                onPress={() => navigation.goBack()}
-            />
+                <Button
+                    title="Go Back"
+                    onPress={() => navigation.goBack()}
+                />
+                </View>
+                
+                
             </View>
-            
-        </View>
+        </ImageBackground>
+      
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -80,6 +90,12 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 20,
         paddingHorizontal: 10,
+    },
+    backgroundImage: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
     },
 });
 

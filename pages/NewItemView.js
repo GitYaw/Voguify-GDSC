@@ -130,6 +130,7 @@ const NewItemView = ({ navigation }) => {
       price: itemPrice,
       date: purchasedDate.toISOString(),
       category: category,
+      image: selectedImage,
       user: currentUser,
     })
       .then(() => {

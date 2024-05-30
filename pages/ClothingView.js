@@ -11,18 +11,17 @@ import blackTshirt from '../assets/black_tshirt.jpeg';
 import searchLogo from '../assets/search_logo.jpeg';
 import primaryBackground from '../assets/primary_background.png';
 
-// Sample product data
-const products = [
-    { id: 1, name: 'Product 1', price: '$10', image: blackTshirt },
-    { id: 2, name: 'Product 2', price: '$20', image: blackTshirt },
-    { id: 3, name: 'Product 3', price: '$30', image: blackTshirt },
-    { id: 4, name: 'Product 4', price: '$40', image: blackTshirt },
-    { id: 5, name: 'Product 5', price: '$50', image: blackTshirt },
-    { id: 6, name: 'Product 6', price: '$60', image: blackTshirt },
-    { id: 7, name: 'Product 7', price: '$70', image: blackTshirt },
-    { id: 8, name: 'Product 8', price: '$80', image: blackTshirt },
-];
 
+// This function is called when an item is clicked
+onItemClick = (item) => {
+    // Navigate to the ItemDetailsView page and pass the title and description
+    this.props.navigation.navigate('ItemDetailsView', {
+        title: item.title,
+        price: item.price,
+        image: item.image,
+        date: item.date,
+    });
+}
 const ClothingView = () => {
     const navigation = useNavigation();
     const [clothingItems, setClothingItems] = useState([]);
@@ -63,10 +62,10 @@ const ClothingView = () => {
     }, [currentUser]);
 
     const renderProductItem = (clothingItem) => (
-        <TouchableOpacity key={clothingItem.id}>
+        <TouchableOpacity key={clothingItem.id} onPress={() => navigation.navigate('ItemDetails', {item: clothingItem})}>
             {/* onPress={() => handleProductPress(clothingItem.id)} */}
             <View style={styles.productItem}>
-                <Image source={blackTshirt} style={styles.productImage} />
+            <Image source={{ uri: clothingItem.image }} style={styles.productImage} />
                 <Text style={styles.productName}>{clothingItem.name}</Text>
                 <Text style={styles.productPrice}>${clothingItem.price}</Text>
             </View>
