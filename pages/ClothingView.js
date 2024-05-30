@@ -66,7 +66,7 @@ const ClothingView = () => {
         <TouchableOpacity key={clothingItem.id}>
             {/* onPress={() => handleProductPress(clothingItem.id)} */}
             <View style={styles.productItem}>
-                <Image source={blackTshirt} style={styles.productImage} />
+            <Image source={{ uri: clothingItem.image }} style={styles.productImage} />
                 <Text style={styles.productName}>{clothingItem.name}</Text>
                 <Text style={styles.productPrice}>${clothingItem.price}</Text>
             </View>
