@@ -40,11 +40,12 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+          <Stack.Screen name="Landing" component={LandingView} />
+          
           <Stack.Screen name="Login" component={LoginView} />
           <Stack.Screen name="Home" options={{ title: 'Welcome!' }}>
               {props => <HomeScreen {...props} handleSignOut={handleSignOut} />}  
           </Stack.Screen>
-          <Stack.Screen name="Landing" component={LandingView} />
           <Stack.Screen name="Profile" component={ProfileView} />
           <Stack.Screen name="CreateAccount" component={RegisterView} />
           <Stack.Screen name="Data" component={DataView} />

@@ -30,6 +30,7 @@ const LandingView = ({navigation}) => {
 
         <TouchableOpacity
           style={styles.registerButton}
+          onPress={() => navigation.navigate('CreateAccount')}
         >
           <Text style={styles.registerText}>Register</Text>
         </TouchableOpacity>
