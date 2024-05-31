@@ -40,7 +40,7 @@ const App = () => {
   
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName='Landing'>
           <Stack.Screen name="Landing" component={LandingView} />
           
           <Stack.Screen name="Login" component={LoginView} />
@@ -93,10 +93,10 @@ const HomeScreen = ({ navigation, handleSignOut}) => {
       ) : (
         <>
         <View style={styles.buttonContainer}>
-          <Button title="Profile" onPress={() => navigation.navigate('Profile')} />
+          <Button title="Register" onPress={() => navigation.navigate('CreateAccount')} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Register" onPress={() => navigation.navigate('CreateAccount')} />
+          <Button title="Home" onPress={() => navigation.navigate('HomeView')} />
         </View>
         <View style={styles.buttonContainer}>
           <Button title="Landing" onPress={() => navigation.navigate('Landing')} />
