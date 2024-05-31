@@ -11,6 +11,7 @@ import RegisterView from './pages/RegisterView'
 import LandingView from './pages/LandingView'
 import NewItemView from './pages/NewItemView'
 import ItemDetailsView from './pages/ItemDetailsView'
+import HomeView from './pages/HomeView'
 import DataView from './pages/DataView'
 import Footer from './Footer'; // Import the Footer component
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -40,11 +41,12 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+          <Stack.Screen name="Landing" component={LandingView} />
+          
           <Stack.Screen name="Login" component={LoginView} />
           <Stack.Screen name="Home" options={{ title: 'Welcome!' }}>
               {props => <HomeScreen {...props} handleSignOut={handleSignOut} />}  
           </Stack.Screen>
-          <Stack.Screen name="Landing" component={LandingView} />
           <Stack.Screen name="Profile" component={ProfileView} />
           <Stack.Screen name="CreateAccount" component={RegisterView} />
           <Stack.Screen name="Data" component={DataView} />
@@ -53,6 +55,7 @@ const App = () => {
           <Stack.Screen name="ItemDetails" component={ItemDetailsView} />
           <Stack.Screen name="Outfits" component={OutfitsView} />
           <Stack.Screen name="Expenses" component={ExpensesView} />
+          <Stack.Screen name="HomeView" component={HomeView} />
       </Stack.Navigator>
       <Footer />
     </NavigationContainer>

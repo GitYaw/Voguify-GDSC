@@ -52,6 +52,7 @@ const CreateAccount = ({ navigation }) => {
         <TouchableOpacity
           // onPress={}
           style={styles.loginButton}
+          onPress={() => navigation.navigate('Login')}
         >
           <Text style={styles.loginText}>Already have an account</Text>
         </TouchableOpacity>
