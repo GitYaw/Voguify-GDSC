@@ -12,7 +12,7 @@ const HomeView = ({ navigation, route }) => {
                     <Image source={require('../assets/VoguifyLogo.png')} style={styles.logo} />
                 </View>
                 <View style={styles.budgetBox}>
-                    <Text style={styles.welcomeText}>Welcome Back, Person!</Text>
+                    <Text style={styles.welcomeText}>Welcome Back, Shyam!</Text>
                     <Text style={styles.budgetLabel}>Your remaining monthly budget is:</Text>
                     <Text style={styles.budgetAmount}>${remainingBudget}</Text>
                     <TouchableOpacity style={styles.budgetButton} onPress={() => navigation.navigate('Expenses')}>
@@ -20,7 +20,7 @@ const HomeView = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.chartContainer}>
-                    <Text style={styles.chartText}>You’re on pace to spend $XX.XX than last month:</Text>
+                    <Text style={styles.chartText}>You’re on pace to spend $25.99 than last month:</Text>
                     {/* Here you can add your chart component */}
                 </View>
                 <View style={styles.buttonContainer}>
@@ -61,15 +61,17 @@ const styles = StyleSheet.create({
         height: 47, // Adjust the size as needed
         flexDirection: 'row',
         alignItems: 'center',
-        left: 140,
+        marginLeft:150,
+        marginTop: -50,
     },
     logo: {
         width: 140, // Adjust the size
         height: 75, // Adjust the size
-        elevation: 10,
         shadowColor: '#000', // Adding shadow for a 3D effect
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.5,
+        marginTop: -50,
+        marginLeft: 10,
     },
     budgetBox: {
         backgroundColor: '#f9f9f9',
@@ -102,11 +104,15 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,
+        alignItems: 'center',
     },
     buttonText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
+        alignContent: 'center',
+    
+        
     },
     chartContainer: {
         alignItems: 'center',
@@ -127,16 +133,14 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: '#D295CC',
         paddingVertical: 15,
-        paddingHorizontal: 30,
+        paddingHorizontal: 20,
         borderRadius: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.8,
         shadowRadius: 2,
         elevation: 5,
-        marginHorizontal: 10,
+        marginRight: 65,
     },
 });
 
