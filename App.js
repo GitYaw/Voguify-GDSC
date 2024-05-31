@@ -7,6 +7,8 @@ import ClothingView from './pages/ClothingView';
 import OutfitsView from './pages/OutfitsView';
 import ExpensesView from './pages/ExpensesView';
 import LoginView from './pages/LoginView'
+import RegisterView from './pages/RegisterView'
+import LandingView from './pages/LandingView'
 import NewItemView from './pages/NewItemView'
 import ItemDetailsView from './pages/ItemDetailsView'
 import HomeView from './pages/HomeView'
@@ -39,11 +41,14 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+          <Stack.Screen name="Landing" component={LandingView} />
+          
           <Stack.Screen name="Login" component={LoginView} />
           <Stack.Screen name="Home" options={{ title: 'Welcome!' }}>
               {props => <HomeScreen {...props} handleSignOut={handleSignOut} />}  
           </Stack.Screen>
           <Stack.Screen name="Profile" component={ProfileView} />
+          <Stack.Screen name="CreateAccount" component={RegisterView} />
           <Stack.Screen name="Data" component={DataView} />
           <Stack.Screen name="Clothing" component={ClothingView} />
           <Stack.Screen name="NewItem" component={NewItemView} />
@@ -91,7 +96,10 @@ const HomeScreen = ({ navigation, handleSignOut}) => {
           <Button title="Profile" onPress={() => navigation.navigate('Profile')} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Home" onPress={() => navigation.navigate('HomeView')} />
+          <Button title="Register" onPress={() => navigation.navigate('CreateAccount')} />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Landing" onPress={() => navigation.navigate('Landing')} />
         </View>
         <View style={styles.buttonContainer}>
           <Button title="Data" onPress={() => navigation.navigate('Data')} />

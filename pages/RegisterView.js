@@ -1,72 +1,32 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Alert, TouchableOpacity, ImageBackground } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
 
 import backgroundImage from '../assets/primary_background.png';
 
-import { database, auth } from '../firebase-config';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-
-const LoginView = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+const CreateAccount = ({ navigation }) => {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-
-  // setting current_user to an empty sting so that it is initialized
-  // const setUserToEmpty = async () => {
-  //   try {
-  //     await AsyncStorage.setItem('current_user', '');
-  //     console.log('Current user set to empty');
-  //   } catch (error) {
-  //     console.error('Error signing out: ', error);
-  //   }
-  // };
-  // setUserToEmpty();
-
-  const storeData = async (auth) => {
-    try {
-      await AsyncStorage.setItem('current_user', email);
-      console.log(email)
-    } catch (e) {
-      console.error("async storage")
+  const handleLogin = () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
     }
+    Alert.alert('SignUp', `Username: ${username}, Password: ${password}`);
   };
-
-  const handleLogin = async () => {
-    Alert.alert('Login', `Email: ${email}, Password: ${password}`);
-
-    // returns a console message if email and password were found
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // User logged in successfully, navigate to message board
-      console.log('You logged in!');
-      console.log(userCredential.user);
-      storeData(auth);
-      navigation.navigate('Home');
-    } catch (error) {
-      console.error('Error logging in:', error.message);
-    }
-  };
-
-  
-
-
-
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Login Here</Text>
-          <Text style={styles.subtitle}>Welcome back!</Text>
+          <Text style={styles.title}>Create Account</Text>
         </View>
         <TextInput
           style={styles.input}
           placeholder='Email'
-          onChangeText={setEmail}
-          value={email}
+          onChangeText={setUsername}
+          value={username}
         />
         <TextInput
           style={styles.input}
@@ -75,19 +35,26 @@ const LoginView = ({ navigation }) => {
           value={password}
           secureTextEntry
         />
+        <TextInput
+          style={styles.input}
+          placeholder='Confirm Password'
+          onChangeText={setConfirmPassword}
+          value={confirmPassword}
+          secureTextEntry
+        />
         <TouchableOpacity
           onPress={handleLogin}
-          style={styles.loginButton}
+          style={styles.registerButton}
         >
-          <Text style={styles.loginText}>Sign in</Text>
+          <Text style={styles.registerText}>Sign up</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           // onPress={}
-          style={styles.registerButton}
-          onPress={() => navigation.navigate('CreateAccount')}
+          style={styles.loginButton}
+          onPress={() => navigation.navigate('Login')}
         >
-          <Text style={styles.registerText}>Create new account</Text>
+          <Text style={styles.loginText}>Already have an account</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -131,7 +98,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingVertical: 10,
   },
-  loginButton: {
+  registerButton: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 15,
@@ -141,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#00aeef',
     marginBottom: 20,
   },
-  registerButton: {
+  loginButton: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
@@ -151,14 +118,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F4FF',
     marginBottom: 20,
   },
-  loginText: {
+  registertext: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
   },
-  registerText: {
+  loginText: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',
@@ -167,4 +134,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginView;
+export default CreateAccount;
