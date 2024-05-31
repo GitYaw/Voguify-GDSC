@@ -14,6 +14,11 @@ const LandingView = ({navigation}) => {
       navigation.navigate('Login');
   }; 
 
+  const handleRegister = async () => {
+    navigation.navigate('CreateAccount');
+}; 
+
+
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
@@ -30,7 +35,7 @@ const LandingView = ({navigation}) => {
 
         <TouchableOpacity
           style={styles.registerButton}
-          onPress={() => navigation.navigate('CreateAccount')}
+          onPress={handleRegister}
         >
           <Text style={styles.registerText}>Register</Text>
         </TouchableOpacity>
