@@ -375,7 +375,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   primaryText: {
-    fontFamily: 'poppins',
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',

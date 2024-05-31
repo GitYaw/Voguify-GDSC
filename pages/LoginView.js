@@ -44,7 +44,7 @@ const LoginView = ({ navigation }) => {
       console.log('You logged in!');
       console.log(userCredential.user);
       storeData(auth);
-      navigation.navigate('Home');
+      navigation.navigate('HomeView');
     } catch (error) {
       console.error('Error logging in:', error.message);
     }
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   subtitle: {
-    fontFamily: 'poppins',
   },
   input: {
     height: 60,

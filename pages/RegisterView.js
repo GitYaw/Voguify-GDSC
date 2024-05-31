@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   subtitle: {
-    fontFamily: 'poppins',
   },
   input: {
     height: 60,

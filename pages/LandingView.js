@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   subtitle: {
-    fontFamily: 'poppins',
   },
   loginButton: {
     alignItems: 'center',
